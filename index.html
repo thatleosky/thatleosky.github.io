@@ -54,108 +54,94 @@
                     </div>
                     <!-- 终端内文字 -->
                     <div class="cmdText">
-                  <!-- 在页面中放置一个容器 -->
-                  <div id="weatherTerminal"></div>
-                  
-                  <script>
-                  // 获取页面上的容器，并创建 shadow root，开启封装模式
-                  var container = document.getElementById("weatherTerminal");
-                  var shadow = container.attachShadow({ mode: "open" });
-                  
-                  // 定义 shadow DOM 内部使用的 HTML 和 CSS
-                  shadow.innerHTML = `
-                    <style>
-                      /* Shadow 内部样式，不会影响页面全局 */
-                  .cmdText {
-                      padding-top: 10px;
-                      padding-left: 15px;
-                  }
-                  
-                  .cmd2 {
-                      position: relative;
-                      top: -280px;
-                      left: 100px;
-                  }
-                  
-                  .cmd2 .cmdText .ul {
-                      margin-left: 15px;
-                  }
-                  
-                  .cmd2 .cmdText .ul a {
-                      text-decoration: none;
-                      color: rgb(88, 89, 92);
-                  }
-                  
-                  .cmd2 .cmdText .ul a:hover {
-                      color: rgb(0, 132, 255);
-                  }
-                  
-                      .cmdText span {
-                        margin-right: 5px;
-                      }
-                      .cmdText .user {
-                        color: rgb(0, 190, 0);
-                      }
-                      .cmdText .path {
-                        color: blue;
-                      }
-                      .cmdText .command {
-                        color: rgb(39, 39, 39);
-                      }
-                      #weatherOutput {
-                        margin-top: 10px;
-                        color: #333;
-                        line-height: 1.4;
-                      }
-                    </style>
-                    <div class="cmdText">
-                        <span class="user">root@leo</span>
-                        <span class="path">~</span>
-                        <span class="command">./weather.sh</span>
-                        <br />
-                        <div id="weatherOutput"></div>
-                    </div>
-                  `;
-                  
-                  // 显示天气信息的函数
-                  function displayWeather(data) {
-                    var html = "";
-                    html += "地区：" + data.province + " " + data.city + " " + data.district + "<br />";
-                    html += "更新时间：" + data.update_time + "<br />";
-                    html += "天气：" + data.weather + "<br />";
-                    html += "温度：" + data.temperature + "°C<br />";
-                    html += "风向：" + data.wind_direction + "<br />";
-                    html += "风力：" + data.wind_power + "<br />";
-                    html += "湿度：" + data.humidity + "%";
-                    // 通过 shadow 内部的 getElementById 更新天气信息
-                    shadow.getElementById("weatherOutput").innerHTML = html;
-                  }
-                  
-                  // 固定的 adcode 值（实际应用中可用自动定位+反向编码替换）
-                  var defaultAdcode = "371300";
-                  
-                  // API key 及接口地址设置
-                  var key = "Kctaa8zzN30meF9oGSa54fLwEc";
-                  var apiUrl = "https://api.nsmao.net/api/weather/query";
-                  var url = apiUrl + "?key=" + encodeURIComponent(key) + "&adcode=" + encodeURIComponent(defaultAdcode);
-                  
-                  // 发起 API 请求获取天气数据
-                  fetch(url)
-                    .then(function(response) {
-                      return response.json();
-                    })
-                    .then(function(result) {
-                      if (result.code === 200 && result.data) {
-                        displayWeather(result.data);
-                      } else {
-                        shadow.getElementById("weatherOutput").innerHTML =
-                          "天气数据获取失败：" + (result.msg || "未知错误");
-                      }
-                    })
-                    .catch(function(error) {
-                      shadow.getElementById("weatherOutput").innerHTML =
-                        "网络错误：" + error;
-                    });
+                 <!-- 在页面中放置一个容器 -->
+                 <div id="weatherTerminal"></div>
+                 
+                 <script>
+                 // 获取页面上的容器，并创建 shadow root，开启封装模式
+                 var container = document.getElementById("weatherTerminal");
+                 var shadow = container.attachShadow({ mode: "open" });
+                 
+                 // 定义 shadow DOM 内部使用的 HTML 和 CSS
+                 shadow.innerHTML = `
+                   <style>
+                     .cmdText {
+                       padding-top: 10px;
+                       padding-left: 15px;
+                     }
+                     .cmdText span {
+                       margin-right: 5px;
+                     }
+                   </style>
+                   <div class="cmdText">
+                     <span style="color: rgb(0, 190, 0)">root@nutssss</span>
+                     <span style="color: blue">~</span>
+                     <span style="color: rgb(39, 39, 39)">./links.sh</span>
+                     <br />
+                     <div id="weatherOutput">正在获取天气信息...</div>
+                   </div>
+                 `;
+                 
+                 // 使用你提供的高德 key 去定位用户 IP 获取 adcode
+                 function fetchAdcodeAndWeather() {
+                   var amapKey = "f66f5ad002da4a381a11e7bb35e50f8b";
+                   var amapUrl = "https://restapi.amap.com/v3/ip?key=" + encodeURIComponent(amapKey);
+                 
+                   fetch(amapUrl)
+                     .then(function(response) {
+                       return response.json();
+                     })
+                     .then(function(locationData) {
+                       if (locationData && locationData.adcode) {
+                         fetchWeather(locationData.adcode);
+                       } else {
+                         shadow.getElementById("weatherOutput").innerHTML = "定位失败";
+                       }
+                     })
+                     .catch(function(err) {
+                       shadow.getElementById("weatherOutput").innerHTML = "定位异常：" + err;
+                     });
+                 }
+                 
+                 function fetchWeather(adcode) {
+                   var weatherKey = "Kctaa8zzN30meF9oGSa54fLwEc";
+                   var apiUrl = "https://api.nsmao.net/api/weather/query";
+                   var url = apiUrl + "?key=" + encodeURIComponent(weatherKey) + "&adcode=" + encodeURIComponent(adcode);
+                 
+                   fetch(url)
+                     .then(function(response) {
+                       return response.json();
+                     })
+                     .then(function(result) {
+                       if (result.code === 200 && result.data) {
+                         displayWeather(result.data);
+                       } else {
+                         shadow.getElementById("weatherOutput").innerHTML =
+                           "天气获取失败：" + (result.msg || "未知错误");
+                       }
+                     })
+                     .catch(function(error) {
+                       shadow.getElementById("weatherOutput").innerHTML =
+                         "天气接口异常：" + error;
+                     });
+                 }
+                 
+                 function displayWeather(data) {
+                   var html = "";
+                   html += "地区：" + data.province + " " + data.city + " " + data.district + "<br />";
+                   html += "更新时间：" + data.update_time + "<br />";
+                   html += "天气：" + data.weather + "<br />";
+                   html += "温度：" + data.temperature + "°C<br />";
+                   html += "风向：" + data.wind_direction + "<br />";
+                   html += "风力：" + data.wind_power + "<br />";
+                   html += "湿度：" + data.humidity + "%";
+                   shadow.getElementById("weatherOutput").innerHTML = html;
+                 }
+                 
+                 // 开始执行获取 adcode 与天气信息的函数
+                 fetchAdcodeAndWeather();
+                 </script>
+
                   </script>
 
                         <br />
