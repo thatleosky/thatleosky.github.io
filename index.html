@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta
+            name="viewport"
+            content="width=device-width,initial-scale=1.0,maximum-scale=1.0,minimum-scale=1.0,user-scalable=no"
+        />
+        <title>清欲の主页</title>
+        <meta name="description" content="清欲的个人主页" />
+        <meta name="keywords" content="清欲" />
+        <link rel="stylesheet" type="text/css" href="./css/FiraCode.css" />
+        <link rel="stylesheet" type="text/css" href="./css/nutssss.css" />
+        <link rel="icon" href="./favicon.ico" />
+    </head>
+
+    <body>
+        <div id="box">
+            <!-- 个人资料卡片 -->
+            <div class="meBox">
+                <!-- 头像 -->
+                <div class="headPhoto"></div>
+                <!-- 介绍 -->
+                <div class="meBox-title">
+                    <p>I'm 清欲</p>
+                    <div class="fg"></div>
+                </div>
+                <div class="meBox-text">
+                    <p>一条咸鱼<img src="./img/fish.png" alt="咸鱼" style="width: 20px; vertical-align: middle" /></p>
+                    <p>喜欢折腾电子产品</p>
+                    <p>瞎折腾浪费时间最在行</p>
+                    <p>最爱<img src="./img/002.png" alt="冰激凌" style="width: 15px; vertical-align: middle" /></p>
+                </div>
+                <!-- 两个按钮 -->
+                <div class="meBox-Button">
+                    <a href="https://blog.leoo.fun/about">关于</a>
+                   <a href="mailto:tswxa3@163.com">电子邮件</a>
+                </div>
+            </div>
+
+            <!-- 伪终端介绍 -->
+            <div id="cmdBox">
+                <!-- 第一个终端 -->
+                <div class="cmd">
+                    <!-- 三个按钮 -->
+                    <div class="click">
+                        <div class="red"></div>
+                        <div class="yellow"></div>
+                        <div class="green"></div>
+                    </div>
+                    <!-- 顶部标题 -->
+                    <div class="title">
+                        <span>leo - bash</span>
+                    </div>
+                    <!-- 终端内文字 -->
+                    <div class="cmdText">
+                  <!-- 在页面中放置一个容器 -->
+                  <div id="weatherTerminal"></div>
+                  
+                  <script>
+                  // 获取页面上的容器，并创建 shadow root，开启封装模式
+                  var container = document.getElementById("weatherTerminal");
+                  var shadow = container.attachShadow({ mode: "open" });
+                  
+                  // 定义 shadow DOM 内部使用的 HTML 和 CSS
+                  shadow.innerHTML = `
+                    <style>
+                      /* Shadow 内部样式，不会影响页面全局 */
+                  .cmdText {
+                      padding-top: 10px;
+                      padding-left: 15px;
+                  }
+                  
+                  .cmd2 {
+                      position: relative;
+                      top: -280px;
+                      left: 100px;
+                  }
+                  
+                  .cmd2 .cmdText .ul {
+                      margin-left: 15px;
+                  }
+                  
+                  .cmd2 .cmdText .ul a {
+                      text-decoration: none;
+                      color: rgb(88, 89, 92);
+                  }
+                  
+                  .cmd2 .cmdText .ul a:hover {
+                      color: rgb(0, 132, 255);
+                  }
+                  
+                      .cmdText span {
+                        margin-right: 5px;
+                      }
+                      .cmdText .user {
+                        color: rgb(0, 190, 0);
+                      }
+                      .cmdText .path {
+                        color: blue;
+                      }
+                      .cmdText .command {
+                        color: rgb(39, 39, 39);
+                      }
+                      #weatherOutput {
+                        margin-top: 10px;
+                        color: #333;
+                        line-height: 1.4;
+                      }
+                    </style>
+                    <div class="cmdText">
+                        <span class="user">root@leo</span>
+                        <span class="path">~</span>
+                        <span class="command">./weather.sh</span>
+                        <br />
+                        <div id="weatherOutput"></div>
+                    </div>
+                  `;
+                  
+                  // 显示天气信息的函数
+                  function displayWeather(data) {
+                    var html = "";
+                    html += "地区：" + data.province + " " + data.city + " " + data.district + "<br />";
+                    html += "更新时间：" + data.update_time + "<br />";
+                    html += "天气：" + data.weather + "<br />";
+                    html += "温度：" + data.temperature + "°C<br />";
+                    html += "风向：" + data.wind_direction + "<br />";
+                    html += "风力：" + data.wind_power + "<br />";
+                    html += "湿度：" + data.humidity + "%";
+                    // 通过 shadow 内部的 getElementById 更新天气信息
+                    shadow.getElementById("weatherOutput").innerHTML = html;
+                  }
+                  
+                  // 固定的 adcode 值（实际应用中可用自动定位+反向编码替换）
+                  var defaultAdcode = "371300";
+                  
+                  // API key 及接口地址设置
+                  var key = "Kctaa8zzN30meF9oGSa54fLwEc";
+                  var apiUrl = "https://api.nsmao.net/api/weather/query";
+                  var url = apiUrl + "?key=" + encodeURIComponent(key) + "&adcode=" + encodeURIComponent(defaultAdcode);
+                  
+                  // 发起 API 请求获取天气数据
+                  fetch(url)
+                    .then(function(response) {
+                      return response.json();
+                    })
+                    .then(function(result) {
+                      if (result.code === 200 && result.data) {
+                        displayWeather(result.data);
+                      } else {
+                        shadow.getElementById("weatherOutput").innerHTML =
+                          "天气数据获取失败：" + (result.msg || "未知错误");
+                      }
+                    })
+                    .catch(function(error) {
+                      shadow.getElementById("weatherOutput").innerHTML =
+                        "网络错误：" + error;
+                    });
+                  </script>
+
+                        <br />
+                        <span style="color: rgb(0, 190, 0)">root@leo</span>
+                        <span style="color: blue">~</span>
+                        <span style="color: rgb(39, 39, 39)">cat /aboutme.txt</span>
+						<p>一条咸鱼</p>
+						<p>喜欢一切可爱的东西</p>
+						<p>最崇拜的男人是老罗</p>
+                        <p>爱好折腾电子产品</p>
+                        <p>生命不息 折腾不止</p>
+						<p>现实中唯唯诺诺 喜欢在网上狗叫</p>
+                        <span style="color: rgb(0, 190, 0)">root@leo</span>
+                        <span style="color: blue">~</span>
+                        <span style="color: rgb(39, 39, 39)">sudo rm -rf /过去的自己/*</span>
+                    </div>
+                </div>
+                <!-- 第二个终端 -->
+                <div class="cmd cmd2">
+                    <!-- 三个按钮 -->
+                    <div class="click">
+                        <div class="red"></div>
+                        <div class="yellow"></div>
+                        <div class="green"></div>
+                    </div>
+                    <!-- 顶部标题 -->
+                    <div class="title">
+                        <span>leo - bash</span>
+                    </div>
+                    <!-- 终端内文字 -->
+                    <div class="cmdText">
+                        <span style="color: rgb(0, 190, 0)">root@leo</span>
+                        <span style="color: blue">~</span>
+                        <span style="color: rgb(39, 39, 39)">./links.sh</span>
+                        <p>我的其他站点（点击名称即可跳转）：</p>
+                        <ul class="ul">
+                            <li><a href="https://www.leoo.fun/">主页</a></li>
+                            <li><a href="https://blog.leoo.fun">博客</a></li>
+<!--                            <li><a href="https://note.n0ts.top/">Note</a></li>
+                            <li><a href="https://mc.n0ts.top/">Mc</a></li>
+                            <li><a href="https://mc.n0ts.top/blog/">McBlog</a></li> -->
+                        </ul>
+                        <span style="color: rgb(0, 190, 0)">root@leo</span>
+                        <span style="color: blue">~</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 页脚 -->
+<!--        <div id="footer">
+            <p>© 2020 NUTSSSS</p>
+            <p>THEME MADE BY <a href="https://n0ts.top/">Nutssss</a></p>
+        </div> -->
+    </body>
+</html>
